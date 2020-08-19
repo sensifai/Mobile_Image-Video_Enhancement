@@ -1,0 +1,1 @@
+int string snpe_name 0x7f020000

@@ -1,0 +1,2 @@
+com.qualcomm.qti.snpe
+string snpe_name
