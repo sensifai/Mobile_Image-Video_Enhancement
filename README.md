@@ -1,6 +1,6 @@
-# Android Example Application
+# Sensifai Mobile Image & Video Enhancement
 
-Sensifai image and video enhancement module on mobiles
+This repository contains an Android SDK for Sensifai Image & Video Enhancement. This SDK brings the ability to any Android mobile application which needs to enhance the quality of images or videos. The AI engine of this SDK enhances the color range and resolution of input image or video in real-time.
 
 ## Build
 Clone this repository and import into **Android Studio**
