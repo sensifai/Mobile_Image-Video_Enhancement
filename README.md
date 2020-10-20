@@ -26,13 +26,13 @@ Fig1. illustrates the Res Block with some modifications.
 
 a new penalty term to multiply in MSE loss function. Since the luminance and contrast are not considered directly in mean square error (MSE) loss function and due to the importance of them, we used the luminance and contrast as a penalty term. This penalty term consists of difference between mean and variance of the input image and it’s ground truth. 
     
-    Loss function = Penalty_Term * MSE
+Loss function = Penalty_Term * MSE
     
-    MSE=  ![mse](Images/mse.png)
+MSE=  ![mse](Images/mse.png)
     
-    Penalty_Term=  [1+(-log(1-(difference/2)))],        0 < difference/2 < +1
+Penalty_Term=  [1+(-log(1-(difference/2)))],        0 < difference/2 < +1
     
-    difference= ![difference](Images/diff.png)
+difference= ![difference](Images/diff.png)
 
 
 Finally, SENSIFAI_512 dataset have been created by SENSIFAI company. Since the size of downloaded images was very larg, we decided to resize images to 512x512. The total number of images in this dataset is 15000 which we have selected 20% as a validation part. Input images in this dataset have been created by Rawtherapee app.  
