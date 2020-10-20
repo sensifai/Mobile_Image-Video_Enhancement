@@ -17,13 +17,13 @@ Many thanks to the Next Generation Internet (NGI) initiative of the European Com
 Earlier methods are mostly based on histogram equalization and gamma correction. The performance of these methods is limited by the fact that individual pixels are enhanced without consideration to contextual information. Many enhancement algorithms based on the Retinex theory [1] have been suggested in the literature [2,3]. More advanced techniques estimate and normalize illumination to get the enhanced image [4,5,6]. Recently, deep convolutional neural networks (DCNNs) have gained great success in image enhancement [7,8]. Ignatov et al. [9] propose DPED to produce DLSR- from mobile quality images by using deep residual networks trained with a composite loss function of content, color, and texture. Also, a Fast and Efficient image Quality Enhancement as FEQE for image super-resolutin and enhancement on mobile devices has been introduced in [10].
 In this project, we used residual blocks with some modifications for the model. In our model, we applied Spacial Channel Attention (SCA) Technique to get more discriminative features.  Channel attention technique by the implementation of Squeeze and Excitation (SE) Block extracts more discriminative features by weighting each of the channels adaptively.  Additionally, we have utilized Spacial Attention as a feature guide block which exploits the nature of low-level features to obtain more discriminative features. Because Low-level features have spatial and local information,  therefore , feature guide block can help to better locate the corners and edges of objects. In our model, we have utilized desubpixel and subpixel layers in down-sampling and up-sampling respectively.
 Fig1. illustrates the Res Block with some modifications.
-![resblock](images/resblock.jpg)
+![resblock](Images/resblock.jpg)
 
 a new penalty term to multiply in MSE loss function. Since the luminance and contrast are not considered directly in mean square error (MSE) loss function and due to the importance of them, we used the luminance and contrast as a penalty term. This penalty term consists of difference between mean and variance of the input image and it’s ground truth. 
     Loss function = Penalty_Term * MSE
-    MSE=  ![mse](images/mse.png)
+    MSE=  ![mse](Images/mse.png)
     Penalty_Term=  [1+(-log(1-(difference/2)))],        0 < difference/2 < +1
-    difference= ![difference](images/diff.png)
+    difference= ![difference](Images/diff.png)
 
 
 Finally, SENSIFAI_512 dataset have been created by SENSIFAI company. Since the size of downloaded images was very larg, we decided to resize images to 512x512. The total number of images in this dataset is 15000 which we have selected 20% as a validation part. Input images in this dataset have been created by Rawtherapee app.  
