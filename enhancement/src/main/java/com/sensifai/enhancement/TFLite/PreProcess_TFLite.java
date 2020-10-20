@@ -14,6 +14,15 @@ import org.tensorflow.lite.support.tensorbuffer.TensorBuffer;
 import org.tensorflow.lite.support.tensorbuffer.TensorBufferFloat;
 
 class PreProcess_TFLite implements PreProcess {
+    /**
+     * {@inheritDoc}
+     * @param width width of given image
+     * @param height height of given image
+     * @param isQuantized
+     * @param bgr
+     * @param mean each item must between 0,255
+     * @param std each item must between 0,255
+     */
     private final int width;
     private final int height;
     private final float[] mean;

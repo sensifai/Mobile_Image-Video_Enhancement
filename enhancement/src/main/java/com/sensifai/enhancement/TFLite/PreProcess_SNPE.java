@@ -21,6 +21,15 @@ class PreProcess_SNPE implements PreProcess {
     private final boolean bgr;
     private final TensorBuffer tensorBuffer;
 
+    /**
+     * {@inheritDoc}
+     * @param width width of given image
+     * @param height height of given image
+     * @param normalizeInput
+     * @param bgr
+     * @param mean each item must between 0,255 or 0,1
+     * @param std each item must between 0,255 or 0,1
+     */
     // mean & std values are in rgb order
     PreProcess_SNPE(int width, int height, boolean normalizeInput,
                     boolean bgr, float[] mean, float[] std) {

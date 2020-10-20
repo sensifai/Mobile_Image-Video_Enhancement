@@ -12,11 +12,19 @@ import org.tensorflow.lite.support.tensorbuffer.TensorBuffer;
 
 class PreProcess_SuperResolution_FEQE implements PreProcess {
 
-
+    /**
+     * each item must between 0,255 or 0,1
+     */
     private final float[] mean;
+    /**
+     * each item must between 0,255 or 0,1
+     */
     private final float[] std;
     private TensorImage tensorImage;
-
+    /**
+     * {@inheritDoc}
+     *
+     */
     PreProcess_SuperResolution_FEQE() {
         this.tensorImage = new TensorImage(DataType.FLOAT32);
         this.mean = new float[]{0.5f * 255, 0.5f * 255, 0.5f * 255};

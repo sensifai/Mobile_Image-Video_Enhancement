@@ -14,6 +14,10 @@ import static android.graphics.Color.rgb;
 class Utils {
     private static final String TAG = Enhancement.class.getSimpleName();
 
+    /**
+     * initialize and load cpp files
+     * @return true if cpp files loaded successfuly else return false
+     */
     static boolean loadJNISo() {
         try {
             System.loadLibrary("enhancement_utils");
@@ -24,8 +28,22 @@ class Utils {
         }
     }
 
+    /**
+     * decrypt model file from assets
+     * @param fileName the name of the model file
+     * @param assetManager responsible for assets manager
+     * @return byte of file
+     */
     static native byte[] decrypt(String fileName, AssetManager assetManager);
 
+    /**
+     * get given image(s) array
+     * @param bitmaps given image to process
+     * @param dstWidth width of the given image in pixels
+     * @param dstHeight height of the given image in pixels
+     * @param preprocessInfo preProcess values ex:mean,std and etc.
+     * @return converted image to array
+     */
     static Pair<float[], float[]> preprocess(Bitmap[] bitmaps, int dstWidth, int dstHeight, PreprocessInfo preprocessInfo) {
 //        bitmap = Bitmap.createScaledBitmap(bitmap, dstWidth, dstHeight, true);
         double meanRed = preprocessInfo.getMeanRed();
@@ -91,6 +109,14 @@ class Utils {
         return new Pair<>(rgb, gray);
     }
 
+    /**
+     * recreate image after process
+     * @param buff array of images buffer
+     * @param dstWidth width of the given image in pixels
+     * @param dstHeight height of the given image in pixels
+     * @param preprocessInfo preProcess values ex:mean,std and etc.
+     * @return enhanced image(s)
+     */
     static Bitmap[] postprocess(float[] buff, int dstWidth, int dstHeight, PreprocessInfo preprocessInfo) {
         double meanRed = preprocessInfo.getMeanRed();
         double meanGreen = preprocessInfo.getMeanGreen();

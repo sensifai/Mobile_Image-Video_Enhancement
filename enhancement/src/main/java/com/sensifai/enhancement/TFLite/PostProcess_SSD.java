@@ -15,6 +15,12 @@ class PostProcess_SSD implements PostProcess<DetectionResult> {
     private final int topK;
     private final float minSize;
 
+    /**
+     * constructor of class
+     * @param confidenceThreshold{@inheritDoc}
+     * @param topK max number of process result
+     * @param minSize {@inheritDoc}
+     */
     PostProcess_SSD(double confidenceThreshold, int topK, float minSize) {
         this.confidenceThreshold = confidenceThreshold;
         this.topK = topK == -1 ? Integer.MAX_VALUE : topK;

@@ -11,6 +11,18 @@ public class PreprocessInfo {
     private final double stdBlue;
     private final boolean bgr;
 
+    /**
+     * {@inheritDoc}
+     * @param normalizeInput
+     * @param bgr
+     * @param meanRed
+     * @param meanGreen
+     * @param meanBlue
+     * @param stdRed
+     * @param stdGreen
+     * @param stdBlue
+     */
+
     PreprocessInfo(boolean normalizeInput, boolean bgr,
                    double meanRed, double meanGreen, double meanBlue,
                    double stdRed, double stdGreen, double stdBlue) {

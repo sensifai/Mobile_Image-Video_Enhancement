@@ -24,28 +24,29 @@ Fig1. illustrates the Res Block with some modifications.
 
 ![resblock](Images/resblock.jpg)
 
-a new penalty term to multiply in MSE loss function. Since the luminance and contrast are not considered directly in mean square error (MSE) loss function and due to the importance of them, we used the luminance and contrast as a penalty term. This penalty term consists of difference between mean and variance of the input image and it’s ground truth. 
-    
+a new penalty term to multiply in MSE loss function. Since the luminance and contrast are not considered directly in mean square error (MSE) loss function and due to the importance of them, we used the luminance and contrast as a penalty term. This penalty term consists of difference between mean and variance of the input image and it’s ground truth.
+
 Loss function = Penalty_Term * MSE
-    
+
 MSE=  ![mse](Images/mse.png)
-    
+
 Penalty_Term=  [1+(-log(1-(difference/2)))],        0 < difference/2 < +1
-    
+
 difference= ![difference](Images/diff.png)
 
 
-Finally, SENSIFAI_512 dataset have been created by SENSIFAI company. Since the size of downloaded images was very larg, we decided to resize images to 512x512. The total number of images in this dataset is 15000 which we have selected 20% as a validation part. Input images in this dataset have been created by Rawtherapee app.  
+Finally, SENSIFAI_512 dataset have been created by SENSIFAI company. Since the size of downloaded images was very larg, we decided to resize images to 512x512. The total number of images in this dataset is 15000 which we have selected 20% as a validation part. Input images in this dataset have been created by Rawtherapee app.
 
 
 ## Android SDK
+
 This repository contains an Android SDK for Sensifai Image & Video Enhancement. This SDK brings the ability to any Android mobile application which needs to enhance the quality of images or videos. The AI engine of this SDK enhances the color range and resolution of input image or video in real-time.
 
-### Build
+## Build
 Clone this repository and import into **Android Studio**
 From the gradle menu choose assembleRelease/assembleDebug Option to build the AAR file (in /enhancement/build/outputs/aar)
 
-### Usage
+## Usage
 Create a new Android Application Project and import the AAR file as a dependency
 add the following dependencies to `build.gradle` file:
 ***TFLite***
@@ -59,4 +60,72 @@ add the following dependencies to `build.gradle` file:
 (import `snpe-release.aar` file as module dependency into the project)
 ```gradle
     implementation project(':snpe-release')
+```
+
+### Code Implementation
+
+***Init***
+Before You can use the model it has to be initialized first. The initialization process needs
+a context, a specific device and the number of threads to use for process.
+The alternatives for device are CPU, GPU, DSP and NNAPI.
+
+**TFLite**
+```java
+    import com.sensifai.enhancement.TFLite.Enhancement;
+    ...
+    public class MainActivity extends AppCompatActivity{
+        Enhancement enhancement;
+        ...
+        @Override public void onCreate(Bundle savedInstanceState){
+            enhancement = new Enhancement({isDynamicInput});
+            enhancement.init(context, "{Enhancement_TFLite_Model_Name}", Device.GPU, 1);
+        }
+    }
+```
+
+**SNPE**
+```java
+    import com.sensifai.ehancement.SNPE.Enhancement;
+    ...
+    public class MainActivity extends AppCompatActivity{
+        Enhancement enhancement;
+        ...
+        @Override public void onCreate(Bundle savedInstanceState){
+            enhancement = new Enhancement();
+            boolean enhancementInited = enhancement.init(this, "{Enhancement_Model_Name}", Device.GPU, 1);
+        }
+    }
+```
+
+***Model Run***
+After the model is initialized you can pass a list of bitmaps to be processed.
+If your model does not support dynamic input you have to resize these bitmaps to the supported dimensions before passing them.
+
+**TFLite**
+```java
+    ProcessResult<EnhancementResult> result = enhancement.process(new Bitmap[]{YOUR_BITMAP_HERE});
+```
+
+**SNPE**
+```java
+    int sizeOperation = 0;  //the operation to do on Bitmap to match the Dimensions.
+                            //0 no operation
+                            //1 rotate
+                            //2 grow
+                            //3 grow and rotate
+    ProcessResult<EnhancementResult> result = enhancement.process(new Bitmap[]{YOUR_BITMAPS_HERE},sizeOperation);
+```
+
+**Release**
+Since the model initiation process happens on the native side it will not be garbage collected, therefore,
+you need to release the model after you are done with it.
+
+**TFLite**
+```java
+    enhancement.release();
+```
+
+**SNPE**
+```java
+    enhancement.release();
 ```

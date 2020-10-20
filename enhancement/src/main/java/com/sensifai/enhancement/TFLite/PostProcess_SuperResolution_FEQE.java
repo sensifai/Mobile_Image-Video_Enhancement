@@ -8,10 +8,19 @@ import org.tensorflow.lite.support.tensorbuffer.TensorBuffer;
 
 
 class PostProcess_SuperResolution_FEQE implements PostProcess<EnhancementResult> {
-
+    /**
+     *  each item must between 0,255 or 0,1
+     */
     private final float[] mean;
+    /**
+     *  each item must between 0,255 or 0,1
+     */
     private final float[] std;
 
+    /**
+     * constructor of class
+     * initialize properties
+     */
     PostProcess_SuperResolution_FEQE() {
         this.mean = new float[]{.5f, .5f, .5f};
         this.std = new float[]{1 / 255f, 1 / 255f, 1 / 255f};

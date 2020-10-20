@@ -8,10 +8,18 @@ import org.tensorflow.lite.support.tensorbuffer.TensorBuffer;
 
 
 class PostProcess_FEQE implements PostProcess<EnhancementResult> {
-
+    /**
+     *  each item must between 0,255 or 0,1
+     */
     private final float[] mean;
+    /**
+     *  each item must between 0,255 or 0,1
+     */
     private final float[] std;
 
+    /**
+     * constructor of class
+     */
     PostProcess_FEQE() {
         this.mean = new float[]{0.33007812f, 0.33007812f, 0.33007812f};
         this.std = new float[]{0.2323942f, 0.22483271f, 0.22995465f};

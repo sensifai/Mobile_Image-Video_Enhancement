@@ -11,6 +11,17 @@ public class ModelInfo {
     private int output_W;
     private int batchSize;
 
+    /**
+     *
+     * @param modelName  name of model that want to use
+     * @param encrypted if model that we want to use is encrypted pass true else false
+     * @param input_H height of the given image in pixels
+     * @param input_W width of the given image in pixels
+     * @param output_H height of the returned image in pixels
+     * @param output_W width of the returned image in pixels
+     * @param batchSize number of batch process
+     * @param preprocessInfo preProcess values ex:mean,std and etc.
+     */
     ModelInfo(String modelName, boolean encrypted,
               int input_H, int input_W, int output_H, int output_W, int batchSize,
               PreprocessInfo preprocessInfo) {

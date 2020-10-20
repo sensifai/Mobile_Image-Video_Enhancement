@@ -41,7 +41,10 @@ public class Enhancement implements Processor<EnhancementResult> {
     private String outputName;
     private Map<String, FloatTensor> inputs;
     private Context context;
-
+    /**
+     * initialize and load cpp files
+     * @return true if cpp files loaded successfuly else return false
+     */
     private boolean loadJNIso() {
         if (!isJNILoaded) {
             isJNILoaded = Utils.loadJNISo();
@@ -49,6 +52,14 @@ public class Enhancement implements Processor<EnhancementResult> {
         return isJNILoaded;
     }
 
+    /**
+     * initialize all requirement object and load model file based on @modelName argument
+     * @param context to get application context
+     * @param modelName The name of the model we intend to use
+     * @param device Which hardware to use to perform the process
+     * @param numThreads The number of threads to be used for the process
+     * @return return true if everything ok else return false
+     */
     public boolean init(Context context, String modelName, Device device, int numThreads) {
         Log.i(TAG, String.format("Initializing model %s.", modelName));
         this.context = context;

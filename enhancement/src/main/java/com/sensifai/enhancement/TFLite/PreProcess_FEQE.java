@@ -11,11 +11,22 @@ import org.tensorflow.lite.support.tensorbuffer.TensorBuffer;
 
 
 class PreProcess_FEQE implements PreProcess {
-
+    /**
+     *  each item must between 0,255 or 0,1
+     */
     private final float[] mean;
+    /**
+     *  each item must between 0,255 or 0,1
+     */
     private final float[] std;
+    /**
+     * {@inheritDoc}
+     */
     private TensorImage tensorImage;
-
+    /**
+     * constructor of class
+     * initialize properties
+     */
     PreProcess_FEQE() {
         this.tensorImage = new TensorImage(DataType.FLOAT32);
         this.mean = new float[]{0.33007812f * 255, 0.33007812f * 255, 0.33007812f * 255};

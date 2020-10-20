@@ -7,6 +7,14 @@ class ModelInfo<E> {
     private final PreProcess preprocessor;
     private final PostProcess<E> postprocessor;
 
+    /**
+     * constructor of class
+     * @param modelFileName name of model
+     * @param labelFileName name labels file
+     * @param modelType type of chipset
+     * @param preprocessor preProcess object
+     * @param postprocessor postProcess object
+     */
     ModelInfo(String modelFileName, String labelFileName, ModelType modelType,
               PreProcess preprocessor, PostProcess<E> postprocessor) {
         this.modelFileName = modelFileName;
@@ -36,6 +44,9 @@ class ModelInfo<E> {
         return postprocessor;
     }
 
+    /**
+     * type of chipset
+     */
     public enum ModelType {
         TFLite,
         SNPE

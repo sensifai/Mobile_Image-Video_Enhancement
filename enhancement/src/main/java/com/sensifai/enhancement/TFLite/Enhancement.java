@@ -18,7 +18,9 @@ import java.util.Map;
 @Keep
 public class Enhancement extends Processor<EnhancementResult> {
     private final boolean isDynamicInput;
-
+    /**
+     * load all models and put them on @EnhancementModels
+     */
     private static final Map<String, ModelInfo<EnhancementResult>> EnhancementModels = new LinkedHashMap<String, ModelInfo<EnhancementResult>>() {{
         put("Enhancement", new ModelInfo<>(
                 "Sensifai_Enhancement_TFLite.tflite", null,
@@ -28,9 +30,16 @@ public class Enhancement extends Processor<EnhancementResult> {
                 ModelInfo.ModelType.TFLite, new PreProcess_SuperResolution_FEQE(), new PostProcess_SuperResolution_FEQE()));
 
     }};
-
+    /**
+     *A tag identifying a group of log messages. Should be a constant in the
+     *class calling the logger.
+     */
     private static final String TAG = Enhancement.class.getSimpleName();
 
+    /**
+     * class constructor
+     * @param isDynamicInput {@inheritDoc}
+     */
     public Enhancement(boolean isDynamicInput) {
         super(EnhancementModels);
         this.isDynamicInput = isDynamicInput;

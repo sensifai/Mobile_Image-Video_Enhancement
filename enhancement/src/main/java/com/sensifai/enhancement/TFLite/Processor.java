@@ -57,6 +57,15 @@ public abstract class Processor<E> implements com.sensifai.enhancement.Processor
         this.modelsMap = modelsMap;
     }
 
+    /**
+     * initialize all requirement object and load model file based on @modelName argument
+     * @param context to get application context
+     * @param modelName The name of the model we intend to use
+     * @param device Which hardware to use to perform the process
+     * @param numThreads The number of threads to be used for the process
+     * @return return true if everything ok else return false
+     */
+
     public boolean init(Context context, String modelName, Device device, int numThreads) {
         this.context = context;
         Application application = ((Application) context.getApplicationContext());
