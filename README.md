@@ -48,7 +48,7 @@ From the gradle menu choose assembleRelease/assembleDebug Option to build the AA
 
 ## Usage
 Create a new Android Application Project and import the AAR file as a dependency
-add the following dependencies to `build.gradle` file:
+add the following dependencies to `build.gradle` file:<br/>
 ***TFLite***
 ```gradle
     implementation 'org.tensorflow:tensorflow-lite:0.0.0-nightly'
@@ -56,7 +56,7 @@ add the following dependencies to `build.gradle` file:
     implementation 'org.tensorflow:tensorflow-lite-support:0.0.0-nightly'
     implementation 'org.tensorflow:tensorflow-lite-hexagon:0.0.0-nightly'
 ```
-***SNPE***
+<br/>***SNPE***
 (import `snpe-release.aar` file as module dependency into the project)
 ```gradle
     implementation project(':snpe-release')
@@ -64,10 +64,10 @@ add the following dependencies to `build.gradle` file:
 
 ### Code Implementation
 
-***Init***
+***Init***<br/>
 Before You can use the model it has to be initialized first. The initialization process needs
 a context, a specific device and the number of threads to use for process.
-The alternatives for device are CPU, GPU, DSP and NNAPI.
+The alternatives for device are CPU, GPU, DSP and NNAPI.<br/>
 
 **TFLite**
 ```java
@@ -83,7 +83,7 @@ The alternatives for device are CPU, GPU, DSP and NNAPI.
     }
 ```
 
-**SNPE**
+<br/>**SNPE**
 ```java
     import com.sensifai.ehancement.SNPE.Enhancement;
     ...
@@ -97,16 +97,16 @@ The alternatives for device are CPU, GPU, DSP and NNAPI.
     }
 ```
 
-***Model Run***
+***Model Run***<br/>
 After the model is initialized you can pass a list of bitmaps to be processed.
-If your model does not support dynamic input you have to resize these bitmaps to the supported dimensions before passing them.
+If your model does not support dynamic input you have to resize these bitmaps to the supported dimensions before passing them.<br/>
 
 **TFLite**
 ```java
     ProcessResult<EnhancementResult> result = enhancement.process(new Bitmap[]{YOUR_BITMAP_HERE});
 ```
 
-**SNPE**
+<br/>**SNPE**
 ```java
     int sizeOperation = 0;  //the operation to do on Bitmap to match the Dimensions.
                             //0 no operation
@@ -116,16 +116,28 @@ If your model does not support dynamic input you have to resize these bitmaps to
     ProcessResult<EnhancementResult> result = enhancement.process(new Bitmap[]{YOUR_BITMAPS_HERE},sizeOperation);
 ```
 
-**Release**
+<br/>***Release***
 Since the model initiation process happens on the native side it will not be garbage collected, therefore,
-you need to release the model after you are done with it.
+you need to release the model after you are done with it.<br/>
 
 **TFLite**
 ```java
     enhancement.release();
 ```
 
-**SNPE**
+<br/>**SNPE**
 ```java
     enhancement.release();
 ```
+
+### Using Your Own Models
+You can extend the processor class of either TFLite or SNPE packages to use your own models. To create such custom class you will need to pass a list of ModelInfo supported by that custom class.
+<br/>
+<br/>
+**TFLite**'s Model info need PreProcess and PostProcess to be defined according to the corresponding Interfaces already defined. There are already some predefined PreProcess and PostProcess classes compatible with some of popular models.
+<br/>
+<br/>
+**SNPE**'s Model info get the preProcess info of the specified model.<br/><br/>
+The defined Enhancement class (extended from processor) in each package (TFLite and SNPE) can be used for most cases of Automatic Image Processing. This class uses the predefined result classes as generic types to format the processed outcome.
+For each bitmap given to the model as input an EnhancementResult is added to the results list in the output ProcessResult object.<br/><br/>
+To further customize the usage you can use your own format for the result retrieval.
