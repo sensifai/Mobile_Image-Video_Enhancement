@@ -24,7 +24,7 @@ Fig1. illustrates the Res Block with some modifications.
 
 ![resblock](Images/resblock.jpg)
 
-a new penalty term to multiply in MSE loss function. Since the luminance and contrast are not considered directly in mean square error (MSE) loss function and due to the importance of them, we used the luminance and contrast as a penalty term. This penalty term consists of difference between mean and variance of the input image and it’s ground truth.
+a new penalty term to multiply in the MSE loss function. Since the luminance and contrast are not considered directly in the mean square error (MSE) loss function and due to the importance of them, we used the luminance and contrast as a penalty term. This penalty term consists of the difference between the mean and variance of the input image and its ground truth.
 
 Loss function = Penalty_Term * MSE
 
@@ -35,12 +35,12 @@ Penalty_Term=  [1+(-log(1-(difference/2)))],        0 < difference/2 < +1
 difference= ![difference](Images/diff.png)
 
 
-Finally, SENSIFAI_512 dataset have been created by SENSIFAI company. Since the size of downloaded images was very larg, we decided to resize images to 512x512. The total number of images in this dataset is 15000 which we have selected 20% as a validation part. Input images in this dataset have been created by Rawtherapee app.
+Finally, the SENSIFAI_512 dataset has been created by SENSIFAI company. Since the size of downloaded images was very large, we decided to resize images to 512x512. The total number of images in this dataset is 15000 which we have selected 20% as a validation part. Input images in this dataset have been created by the Rawtherapee app.
 
 
 ## Android SDK
 
-This repository contains an Android SDK for Sensifai Image & Video Enhancement. This SDK brings the ability to any Android mobile application which needs to enhance the quality of images or videos. The AI engine of this SDK enhances the color range and resolution of input image or video in real-time.
+This repository contains an Android SDK for Sensifai Image & Video Enhancement. This SDK brings the ability to any Android mobile application which needs to enhance the quality of images or videos. The AI engine of this SDK enhances the color range and resolution of the input image or video in real-time.
 
 ## Build
 Clone this repository and import into **Android Studio**
