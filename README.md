@@ -18,13 +18,13 @@ SensifAI offers a game-changing technology that solves this problem. We have dev
 Many thanks to the Next Generation Internet (NGI) initiative of the European Commission and NGI Trust consortium partners for their support and help during the development of Sensifai image and video enhancement app.
 
 ## Enhancement Engine
-Earlier methods are mostly based on histogram equalization and gamma correction. The performance of these methods is limited by the fact that individual pixels are enhanced without consideration of contextual information. Many enhancement algorithms based on the Retinex theory [1] have been suggested in the literature [2,3]. More advanced techniques estimate and normalize illumination to get the enhanced image [4,5,6]. Recently, deep convolutional neural networks (DCNNs) have gained great success in image enhancement [7,8]. Ignatov et al. [9] propose DPED to produce DLSR- from mobile quality images by using deep residual networks trained with a composite loss function of content, color, and texture. Also, a Fast and Efficient image Quality Enhancement as FEQE for image super-resolution and enhancement on mobile devices has been introduced in [10].
-We used residual blocks with some modifications for the model. In our model, we applied the Spatial Channel Attention (SCA) Technique to get more discriminative features.using channel attention technique by implementing Squeeze and Excitation (SE) Block extracts more discriminative features by weighting each of the channels adaptively.  Additionally, we have utilized spatial Attention as a feature guide block which exploits the nature of low-level features to obtain more discriminative features.  Low-level features have spatial and local information; therefore, the feature guide block can help in locating the corners and edges of objects. In our model, we have utilized de-subpixel and subpixel layers in down-sampling and up-sampling respectively.
+Earlier methods are mostly based on histogram equalization and gamma correction. The performance of these methods is limited by the fact that individual pixels are enhanced without consideration to contextual information. Many enhancement algorithms based on the Retinex theory [1] have been suggested in the literature [2,3]. More advanced techniques estimate and normalize illumination to get the enhanced image [4,5,6]. Recently, deep convolutional neural networks (DCNNs) have gained great success in image enhancement [7,8]. Ignatov et al. [9] propose DPED to produce DLSR- from mobile quality images by using deep residual networks trained with a composite loss function of content, color, and texture. Also, a Fast and Efficient image Quality Enhancement as FEQE for image super-resolutin and enhancement on mobile devices has been introduced in [10].
+In this project, we used residual blocks with some modifications for the model. In our model, we applied Spacial Channel Attention (SCA) Technique to get more discriminative features.  Channel attention technique by the implementation of Squeeze and Excitation (SE) Block extracts more discriminative features by weighting each of the channels adaptively.  Additionally, we have utilized Spacial Attention as a feature guide block which exploits the nature of low-level features to obtain more discriminative features. Because Low-level features have spatial and local information,  therefore , feature guide block can help to better locate the corners and edges of objects. In our model, we have utilized desubpixel and subpixel layers in down-sampling and up-sampling respectively.
 Fig1. illustrates the Res Block with some modifications.
 
 ![resblock](Images/resblock.jpg)
 
-a new penalty term to multiply in the MSE loss function. Since the luminance and contrast are not considered directly in the mean square error (MSE) loss function and due to the importance of them, we used the luminance and contrast as a penalty term. This penalty term consists of the difference between the mean and variance of the input image and its ground truth.
+a new penalty term to multiply in MSE loss function. Since the luminance and contrast are not considered directly in mean square error (MSE) loss function and due to the importance of them, we used the luminance and contrast as a penalty term. This penalty term consists of difference between mean and variance of the input image and it’s ground truth.
 
 Loss function = Penalty_Term * MSE
 
@@ -35,12 +35,12 @@ Penalty_Term=  [1+(-log(1-(difference/2)))],        0 < difference/2 < +1
 difference= ![difference](Images/diff.png)
 
 
-Finally, the SENSIFAI_512 dataset has been created by SENSIFAI company. Since the size of downloaded images was very large, we decided to resize images to 512x512. The total number of images in this dataset is 15000 which we have selected 20% as a validation part. Input images in this dataset have been created by the Rawtherapee app.
+Finally, SENSIFAI_512 dataset have been created by SENSIFAI company. Since the size of downloaded images was very larg, we decided to resize images to 512x512. The total number of images in this dataset is 15000 which we have selected 20% as a validation part. Input images in this dataset have been created by Rawtherapee app.
 
 
 ## Android SDK
 
-This repository contains an Android SDK for Sensifai Image & Video Enhancement. This SDK brings the ability to any Android mobile application which needs to enhance the quality of images or videos. The AI engine of this SDK enhances the color range and resolution of the input image or video in real-time.
+This repository contains an Android SDK for Sensifai Image & Video Enhancement. This SDK brings the ability to any Android mobile application which needs to enhance the quality of images or videos. The AI engine of this SDK enhances the color range and resolution of input image or video in real-time.
 
 ## Build
 Clone this repository and import into **Android Studio**
@@ -65,9 +65,12 @@ add the following dependencies to `build.gradle` file:<br/>
 ### Code Implementation
 
 ***Init***<br/>
-Before You can use the model it has to be initialized first. The initialization process needs
-a context, a specific device and the number of threads to use for process.
-The alternatives for device are CPU, GPU, DSP and NNAPI.<br/>
+Before You can use the model it has to be initialized first. The initialization process needs these parameters:
+
+- Context: Activity or Application context<br/>
+- ModelName: Name of the model that you want to use<br/>
+- Device: A specific device (The alternatives for device are CPU, GPU, DSP and NNAPI).<br/>
+- NumOfThreads: The Number of threads to use for process<br/>
 
 **TFLite**
 ```java
@@ -77,8 +80,8 @@ The alternatives for device are CPU, GPU, DSP and NNAPI.<br/>
         Enhancement enhancement;
         ...
         @Override public void onCreate(Bundle savedInstanceState){
-            enhancement = new Enhancement({isDynamicInput});
-            enhancement.init(context, "{Enhancement_TFLite_Model_Name}", Device.GPU, 1);
+            enhancement = new Enhancement({isDynamicInput});//Whether the model size can change or not
+            enhancement.init(this, "{Enhancement_TFLite_Model_Name}", Device.GPU, 1);
         }
     }
 ```
@@ -107,16 +110,41 @@ If your model does not support dynamic input you have to resize these bitmaps to
 ```
 
 <br/>**SNPE**
+<br/>
+SNPE model can work with specific image sizes therefore we added sizeOperation parameter to the Process method, you have to pass one of the below items:<br/>
+
+- 0: Without changes<br/>
+- 1: `if (IMAGE_WIDTH = INPUT_HEIGHT and IMAGE_HEIGHT = INPUT_WIDTH)` <br/>
+- 2: `if ((IMAGE_WIDTH / INPUT_WIDTH) = (IMAGE_HEIGHT / INPUT_HEIGHT))` <br/>
+- 3: If need to both rotate and grow (based on the above descriptions) <br/> 
+
 ```java
-    int sizeOperation = 0;  //the operation to do on Bitmap to match the Dimensions.
-                            //0 no operation
-                            //1 rotate
-                            //2 grow
-                            //3 grow and rotate
+    int sizeOperation = 0;  
     ProcessResult<EnhancementResult> result = enhancement.process(new Bitmap[]{YOUR_BITMAPS_HERE},sizeOperation);
+```
+<br/>***Resluts***
+<br/>
+The procoess results is returned in a `ProcessResult` object of generic type `EnhancementResult`. The `EnhancementResult` contains an array of bitmaps each representing an Enhancement process (in our models it has only one bitmap). The `ProcessResult` consists of a list of generic type `E` (`EnhancementResult` in this case) which has an entry for each input bitmap of the process (1 here). Alongside this list there are also the `inferenceTime` and `totalTime` of the process for performance information.
+
+```java
+    if (result == null) {
+                Log.e(TAG, "Processing returned with error!");
+                return;
+            }
+            if (result.getResults() == null || result.getResults().size() == 0) {
+                Log.e(TAG, "Image Size Not Supported!");
+                return;
+            }
+
+            if (saveBitmap(getApplicationContext(), result.getResults().get(0).getEnhancedImages()[0], processedTempFile)) {
+                    Log.e(TAG, "Processed Image Saved Successfully");
+            }
+            Log.e(TAG, String.format(Locale.US, "Total time:  %d ms\nInference time:  %d ms",
+                    result.getTotalTime(), result.getInferenceTime()));
 ```
 
 <br/>***Release***
+<br/>
 Since the model initiation process happens on the native side it will not be garbage collected, therefore,
 you need to release the model after you are done with it.<br/>
 
@@ -141,7 +169,6 @@ You can extend the processor class of either TFLite or SNPE packages to use your
 The defined Enhancement class (extended from processor) in each package (TFLite and SNPE) can be used for most cases of Automatic Image Processing. This class uses the predefined result classes as generic types to format the processed outcome.
 For each bitmap given to the model as input an EnhancementResult is added to the results list in the output ProcessResult object.<br/><br/>
 To further customize the usage you can use your own format for the result retrieval.
-
 
 
 ## References
