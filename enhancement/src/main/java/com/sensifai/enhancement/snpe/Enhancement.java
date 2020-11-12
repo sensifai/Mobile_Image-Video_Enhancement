@@ -1,4 +1,29 @@
-package com.sensifai.enhancement.SNPE;
+/*
+ * MIT License
+ *
+ * Copyright (c)2020 Sensifai
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ */
+
+package com.sensifai.enhancement.snpe;
 
 import android.app.Application;
 import android.content.Context;
@@ -28,7 +53,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import static com.sensifai.enhancement.SNPE.Constant.AllModels;
+import static com.sensifai.enhancement.snpe.Constant.AllModels;
 
 
 public class Enhancement implements Processor<EnhancementResult> {
@@ -37,15 +62,17 @@ public class Enhancement implements Processor<EnhancementResult> {
     private boolean isJNILoaded;
     private ModelInfo model;
     private NeuralNetwork network;
-    private String inputName_RGB;
+    private String inputNameRGB;
     private String outputName;
     private Map<String, FloatTensor> inputs;
     private Context context;
+
     /**
      * initialize and load cpp files
+     *
      * @return true if cpp files loaded successfuly else return false
      */
-    private boolean loadJNIso() {
+    public boolean loadJNIso() {
         if (!isJNILoaded) {
             isJNILoaded = Utils.loadJNISo();
         }
@@ -107,15 +134,15 @@ public class Enhancement implements Processor<EnhancementResult> {
                 throw new IllegalStateException("Invalid network input and/or output tensors.");
             } else {
                 Iterator<String> it = inputNames.iterator();
-                inputName_RGB = it.next();
+                inputNameRGB = it.next();
                 // inputName_Gray = it.next();
                 outputName = outputNames.iterator().next();
                 final FloatTensor inputTensor_RGB = network.createFloatTensor(
-                        network.getInputTensorsShapes().get(inputName_RGB));
+                        network.getInputTensorsShapes().get(inputNameRGB));
                 // final FloatTensor inputTensor_Gray = network.createFloatTensor(
                 //         network.getInputTensorsShapes().get(inputName_Gray));
                 inputs = new HashMap<>();
-                inputs.put(inputName_RGB, inputTensor_RGB);
+                inputs.put(inputNameRGB, inputTensor_RGB);
                 // inputs.put(inputName_Gray, inputTensor_Gray);
             }
         } catch (IllegalStateException | IOException e) {
@@ -131,7 +158,7 @@ public class Enhancement implements Processor<EnhancementResult> {
             Log.e(TAG, "Not initialized.");
             return null;
         }
-        return new Size(model.getInput_W(), model.getInput_H());
+        return new Size(model.getInputW(), model.getInputH());
     }
 
     @Override
@@ -162,12 +189,12 @@ public class Enhancement implements Processor<EnhancementResult> {
                     break;
                 case 2:
                     for (int i = 0; i < images.length; i++) {
-                        processReadyImages[i] = Bitmap.createScaledBitmap(images[i], model.getInput_W(), model.getInput_H(), true);
+                        processReadyImages[i] = Bitmap.createScaledBitmap(images[i], model.getInputW(), model.getInputH(), true);
                     }
                     break;
                 case 3:
                     for (int i = 0; i < images.length; i++) {
-                        Bitmap scaled = Bitmap.createScaledBitmap(images[i], model.getInput_H(), model.getInput_W(), true);
+                        Bitmap scaled = Bitmap.createScaledBitmap(images[i], model.getInputH(), model.getInputW(), true);
                         processReadyImages[i] = Bitmap.createBitmap(scaled, 0, 0, scaled.getWidth(), scaled.getHeight(), rotateMatrix, true);
                     }
                     break;
@@ -176,8 +203,8 @@ public class Enhancement implements Processor<EnhancementResult> {
             }
 
             Pair<float[], float[]> preprocImage = Utils.preprocess(processReadyImages,
-                    model.getInput_W(), model.getInput_H(), model.getPreprocessInfo());
-            inputs.get(inputName_RGB).write(preprocImage.first, 0, preprocImage.first.length);
+                    model.getInputW(), model.getInputH(), model.getPreprocessInfo());
+            inputs.get(inputNameRGB).write(preprocImage.first, 0, preprocImage.first.length);
             // inputs.get(inputName_Gray).write(preprocImage.second, 0, preprocImage.second.length);
             long inferenceStartTime = System.nanoTime();
             final Map<String, FloatTensor> outputs = network.execute(inputs);
@@ -188,7 +215,7 @@ public class Enhancement implements Processor<EnhancementResult> {
             outputs.get(outputName).read(buff, 0, buff.length);
 
             Bitmap[] result = Utils.postprocess(buff,
-                    model.getInput_W(), model.getInput_H(), model.getPreprocessInfo());
+                    model.getInputW(), model.getInputH(), model.getPreprocessInfo());
 
             Bitmap[] revertedProcessedImages = new Bitmap[images.length];
             Matrix rotateBackMatrix = new Matrix();
@@ -247,7 +274,7 @@ public class Enhancement implements Processor<EnhancementResult> {
         network = null;
         model = null;
         if (inputs != null) {
-            inputs.get(inputName_RGB).release();
+            inputs.get(inputNameRGB).release();
             // inputs.get(inputName_Gray).release();
             inputs = null;
         }

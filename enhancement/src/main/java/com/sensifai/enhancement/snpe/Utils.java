@@ -1,4 +1,29 @@
-package com.sensifai.enhancement.SNPE;
+/*
+ * MIT License
+ *
+ * Copyright (c)2020 Sensifai
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ */
+
+package com.sensifai.enhancement.snpe;
 
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
@@ -13,6 +38,7 @@ import static android.graphics.Color.rgb;
 
 class Utils {
     private static final String TAG = Enhancement.class.getSimpleName();
+    private static final float[] greyWeights = new float[]{0.299f, 0.587f, 0.114f};
 
     /**
      * initialize and load cpp files
@@ -45,7 +71,6 @@ class Utils {
      * @return converted image to array
      */
     static Pair<float[], float[]> preprocess(Bitmap[] bitmaps, int dstWidth, int dstHeight, PreprocessInfo preprocessInfo) {
-//        bitmap = Bitmap.createScaledBitmap(bitmap, dstWidth, dstHeight, true);
         double meanRed = preprocessInfo.getMeanRed();
         double meanGreen = preprocessInfo.getMeanGreen();
         double meanBlue = preprocessInfo.getMeanBlue();
@@ -65,20 +90,21 @@ class Utils {
             PreprocFunc preproc;
             // If divide bgr/rgb values by a norm variable (1 or 255) it results in infinity in run mode!!
             // So there was no better way except separating states like this.
-            if (preprocessInfo.shouldNormalizeInput())
+            if (preprocessInfo.shouldNormalizeInput()) {
                 preproc = new PreprocFunc() {
                     @Override
-                    public float apply(double v, double m, double s) {
-                        return (float) ((v / 255.0 - m) / s);
+                    public float apply(double val, double mean, double std) {
+                        return (float) ((val / 255.0 - mean) / std);
                     }
                 };
-            else
+            } else {
                 preproc = new PreprocFunc() {
                     @Override
-                    public float apply(double v, double m, double s) {
-                        return (float) ((v - m) / s);
+                    public float apply(double val, double mean, double std) {
+                        return (float) ((val - mean) / std);
                     }
                 };
+            }
 
             // Condition got out of loops to improve performance
             if (preprocessInfo.isBgr()) {
@@ -89,7 +115,7 @@ class Utils {
                         rgb[rgbOffset + batchIdx] = preproc.apply(blue(colors[idx]), meanBlue, stdBlue);
                         rgb[rgbOffset + batchIdx + 1] = preproc.apply(green(colors[idx]), meanGreen, stdGreen);
                         rgb[rgbOffset + batchIdx + 2] = preproc.apply(red(colors[idx]), meanRed, stdRed);
-                        gray[grayOffset + idx] = (float) (1. - (0.299 * (rgb[batchIdx + 2] + 1) + 0.587 * (rgb[batchIdx + 1] + 1) + 0.114 * (rgb[batchIdx] + 1)) / 2.);
+                        gray[grayOffset + idx] = 1f - (greyWeights[0] * (rgb[batchIdx + 2] + 1) + greyWeights[1] * (rgb[batchIdx + 1] + 1) + greyWeights[2] * (rgb[batchIdx] + 1)) / 2f;
                     }
                 }
             } else {
@@ -100,7 +126,7 @@ class Utils {
                         rgb[rgbOffset + batchIdx] = preproc.apply(red(colors[idx]), meanRed, stdRed);
                         rgb[rgbOffset + batchIdx + 1] = preproc.apply(green(colors[idx]), meanGreen, stdGreen);
                         rgb[rgbOffset + batchIdx + 2] = preproc.apply(blue(colors[idx]), meanBlue, stdBlue);
-                        gray[grayOffset + idx] = (float) (1. - (0.299 * (rgb[batchIdx] + 1) + 0.587 * (rgb[batchIdx + 1] + 1) + 0.114 * (rgb[batchIdx + 2] + 1)) / 2.);
+                        gray[grayOffset + idx] = 1f - (greyWeights[0] * (rgb[batchIdx] + 1) + greyWeights[1] * (rgb[batchIdx + 1] + 1) + greyWeights[2] * (rgb[batchIdx + 2] + 1)) / 2f;
                     }
                 }
             }
@@ -132,20 +158,21 @@ class Utils {
         PreprocFunc preproc;
         // If divide bgr/rgb values by a norm variable (1 or 255) it results in infinity in run mode!!
         // So there was no better way except separating states like this.
-        if (preprocessInfo.shouldNormalizeInput())
+        if (preprocessInfo.shouldNormalizeInput()) {
             preproc = new PreprocFunc() {
                 @Override
-                public float apply(double v, double m, double s) {
-                    return Math.max(0, Math.min(255, (float) ((v * s + m) * 255.0)));
+                public float apply(double val, double mean, double std) {
+                    return Math.max(0, Math.min(255, (float) ((val * std + mean) * 255.0)));
                 }
             };
-        else
+        } else {
             preproc = new PreprocFunc() {
                 @Override
-                public float apply(double v, double m, double s) {
-                    return Math.max(0, Math.min(255, (float) (v * s + m)));
+                public float apply(double val, double mean, double std) {
+                    return Math.max(0, Math.min(255, (float) (val * std + mean)));
                 }
             };
+        }
 
         for (int imgIdx = 0; imgIdx < imageCount; imgIdx++) {
             // Condition got out of loops to improve performance

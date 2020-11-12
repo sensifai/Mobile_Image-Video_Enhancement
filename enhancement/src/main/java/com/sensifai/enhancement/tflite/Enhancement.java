@@ -1,4 +1,29 @@
-package com.sensifai.enhancement.TFLite;
+/*
+ * MIT License
+ *
+ * Copyright (c)2020 Sensifai
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ */
+
+package com.sensifai.enhancement.tflite;
 
 import android.graphics.Bitmap;
 import android.os.SystemClock;
@@ -21,13 +46,16 @@ public class Enhancement extends Processor<EnhancementResult> {
     /**
      * load all models and put them on @EnhancementModels
      */
-    private static final Map<String, ModelInfo<EnhancementResult>> EnhancementModels = new LinkedHashMap<String, ModelInfo<EnhancementResult>>() {{
+    private static final Map<String, ModelInfo<EnhancementResult>> ENHANCEMENT_MODELS = new LinkedHashMap<String, ModelInfo<EnhancementResult>>() {{
         put("Enhancement", new ModelInfo<>(
                 "Sensifai_Enhancement_TFLite.tflite", null,
-                ModelInfo.ModelType.TFLite, new PreProcess_FEQE(), new PostProcess_FEQE()));
+                ModelInfo.ModelType.TFLite, new PreProcessFEQE(), new PostProcessFEQE()));
         put("SuperResolution", new ModelInfo<>(
                 "Sensifai_SuperResolution_TFLite.tflite", null,
-                ModelInfo.ModelType.TFLite, new PreProcess_SuperResolution_FEQE(), new PostProcess_SuperResolution_FEQE()));
+                ModelInfo.ModelType.TFLite, new PreProcess_SuperResolution_FEQE(), new PostProcessSuperResolutionFEQE()));
+        put("Enhancement16", new ModelInfo<>(
+                "Sensifai_Enhancement_TFLite_float16.tflite", null,
+                ModelInfo.ModelType.TFLite, new PreProcessFEQE(), new PostProcessFEQE()));
 
     }};
     /**
@@ -41,7 +69,7 @@ public class Enhancement extends Processor<EnhancementResult> {
      * @param isDynamicInput {@inheritDoc}
      */
     public Enhancement(boolean isDynamicInput) {
-        super(EnhancementModels);
+        super(ENHANCEMENT_MODELS);
         this.isDynamicInput = isDynamicInput;
     }
 
@@ -62,8 +90,9 @@ public class Enhancement extends Processor<EnhancementResult> {
 
         ProcessResult<EnhancementResult> result = super.process(images, orientation);
 
-        if (result == null)
+        if (result == null) {
             return null;
+        }
 
         long totalTime = SystemClock.uptimeMillis() - totalStartTime;
 

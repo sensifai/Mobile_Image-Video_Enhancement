@@ -1,4 +1,29 @@
-package com.sensifai.enhancement.SNPE;
+/*
+ * MIT License
+ *
+ * Copyright (c)2020 Sensifai
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ */
+
+package com.sensifai.enhancement.snpe;
 
 import android.content.Context;
 import android.media.MediaScannerConnection;
@@ -153,8 +178,9 @@ public class Log {
     private static void log(int logType, String logMessageTag, String logMessage, Throwable throwableException) {
         if (!android.util.Log.isLoggable(logMessageTag, logType) ||
                 logType == android.util.Log.VERBOSE && !BuildConfig.DEBUG ||
-                logType == android.util.Log.DEBUG && !BuildConfig.DEBUG)
+                logType == android.util.Log.DEBUG && !BuildConfig.DEBUG) {
             return;
+        }
 
         int logResult = 0;
         switch (logType) {
@@ -186,10 +212,11 @@ public class Log {
         }
 
         if (logResult > 0) {
-            if (throwableException != null)
+            if (throwableException != null) {
                 logToFile(logType, logMessageTag, logMessage);
-            else
+            } else {
                 logToFile(logType, logMessageTag, logMessage + "\r\n" + android.util.Log.getStackTraceString(throwableException));
+            }
         }
 
     }
@@ -204,8 +231,9 @@ public class Log {
                 logDirectory.mkdirs();
             }
 
-            if (!logFile.exists())
+            if (!logFile.exists()) {
                 logFile.createNewFile();
+            }
 
             String logTypeTag = "";
             switch (logType) {

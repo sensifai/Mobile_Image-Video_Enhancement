@@ -1,4 +1,29 @@
-package com.sensifai.enhancement.TFLite;
+/*
+ * MIT License
+ *
+ * Copyright (c)2020 Sensifai
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ */
+
+package com.sensifai.enhancement.tflite;
 
 import android.app.Application;
 import android.content.Context;
@@ -25,8 +50,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-//import org.tensorflow.lite.flex.FlexDelegate;
-
 public abstract class Processor<E> implements com.sensifai.enhancement.Processor<E> {
     private static final String TAG = Processor.class.getSimpleName();
 
@@ -38,7 +61,6 @@ public abstract class Processor<E> implements com.sensifai.enhancement.Processor
 
     // TFLite specific variables
     protected Interpreter tflite;
-    //    private FlexDelegate flexDelegate = null; /** Optional Flex delegate for TF ops support. */
     protected TensorBuffer[] tfliteOutputs;
     /**
      * Optional GPU delegate for accleration.
@@ -78,8 +100,6 @@ public abstract class Processor<E> implements com.sensifai.enhancement.Processor
 
         try {
             Interpreter.Options tfliteOptions = new Interpreter.Options();
-            // flexDelegate = new FlexDelegate();
-            // tfliteOptions.addDelegate(flexDelegate);
             switch (device) {
                 case NNAPI:
                     nnApiDelegate = new NnApiDelegate();
@@ -115,7 +135,8 @@ public abstract class Processor<E> implements com.sensifai.enhancement.Processor
             return true;
         } catch (Exception ex) {
             release();
-            Log.e(TAG, ex.getMessage());
+            Log.e(TAG, "Beginning of stacktrace:");
+            ex.printStackTrace();
         }
         return false;
     }
@@ -138,10 +159,6 @@ public abstract class Processor<E> implements com.sensifai.enhancement.Processor
             dspDelegate.close();
             dspDelegate = null;
         }
-//        if (flexDelegate != null) {
-//            flexDelegate.close();
-//            flexDelegate = null;
-//        }
         tfliteOutputs = null;
         return true;
     }
@@ -171,8 +188,6 @@ public abstract class Processor<E> implements com.sensifai.enhancement.Processor
                 // Pre-processing
                 TensorBuffer input = model.getPreProcessor().apply(image, orientation);
                 preProcessTime = SystemClock.uptimeMillis() - totalStartTime;
-
-                // Runtime.getRuntime().gc();
 
                 // Inferencing
                 Object[] inputArray = {input.getBuffer()};
@@ -204,7 +219,7 @@ public abstract class Processor<E> implements com.sensifai.enhancement.Processor
             return new ProcessResult<>(allResults, labels, inferenceTime, totalTime);
 
         } catch (Exception ex) {
-//            Log.e(TAG, ex.getMessage());
+            Log.e(TAG, "beginning of stacktrace:");
             ex.printStackTrace();
         }
         return null;
