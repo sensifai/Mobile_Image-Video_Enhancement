@@ -170,6 +170,9 @@ The defined Enhancement class (extended from processor) in each package (TFLite 
 For each bitmap given to the model as input an EnhancementResult is added to the results list in the output ProcessResult object.<br/><br/>
 To further customize the usage you can use your own format for the result retrieval.
 
+### Coding Style
+**This Section is Useful for Contributors and Developers Who Need to Customize Some Functionality**
+![codeStyle](CodeStyle.md)
 
 ## References
     1. Land, E.H.: The retinex theory of color vision. Scientific american (1977)
