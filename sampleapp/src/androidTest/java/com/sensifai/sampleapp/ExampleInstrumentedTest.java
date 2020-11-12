@@ -23,7 +23,8 @@
  *
  */
 
-include ':sampleapp'
-include ':snpe-release'
-include ':enhancement'
-rootProject.name = "Enhancement"
+package com.sensifai.sampleapp;
+
+public class ExampleInstrumentedTest {
+
+}
